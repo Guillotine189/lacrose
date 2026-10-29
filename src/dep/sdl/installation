@@ -1,0 +1,15 @@
+# How to use SDL library in a project
+
+# I build the SDL library for my system, then link the library.
+
+Steps: 
+
+mkdir sdl
+cd sdl
+git clone "github Link for sdl" # this will create a "SDL" folder
+cmake --build ./src/dep/sdl/SDL/build --parallel 4
+
+# This will create a "Makefile" inside
+# This will create a shared object file:  libSDL3.so.{verison} inside
+
+# I can now link this library in my project.

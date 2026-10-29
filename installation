@@ -1,0 +1,12 @@
+1) install sdl from sdl folder. it has a installation guide
+
+Linking SDL
+
+g++ main.cpp -o lacrose -L./dep/sdl -lSDL3
+
+breakdown 
+	g++ 		: the compiler to use
+	main.cpp 	: the file that needs to be compiled
+	-o lacrose  : the output file is named as "lacrose"
+	-L./dep/sdl : Locatoion is ./dep/sdl
+	-lSDL3 		: "libSDL3", "-l" is resolved to "lib", and linker is smart enough to autocomplete
