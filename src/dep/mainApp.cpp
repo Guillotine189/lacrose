@@ -17,6 +17,7 @@ private:
 
     Uint64 m_fps;
     Uint64 m_target_frame_time;
+    SDL_Texture* m_background_texture;
 
 public:
 
@@ -31,7 +32,7 @@ public:
         m_screen_width = 720;
         m_main_window_title = "lacrose";
 
-        m_fps = 200;
+        m_fps = 60;
         m_target_frame_time = int(1000/m_fps);
 
         if ( !this->init() ){
@@ -43,6 +44,25 @@ public:
             Log("Error", "Creating window", "Exiting");
             return;
         }   
+
+
+        SDL_Surface* background_surface = nullptr;
+        background_surface = SDL_LoadBMP("./images/test.bmp");
+
+        if (background_surface == nullptr){
+            Log("Error", "Initializing background surface", "Exiting");
+            return;
+        }
+
+        m_background_texture = nullptr;
+        m_background_texture = SDL_CreateTextureFromSurface(m_renderer, background_surface);
+
+        if (m_background_texture == nullptr){
+            Log("Error", "Initializing background texture", "Exiting");
+            return;
+        }
+        
+        SDL_DestroySurface(background_surface);
 
         m_initialized = true;
     }
@@ -93,7 +113,7 @@ public:
         SDL_SetWindowTitle(m_main_window, m_main_window_title.c_str());
     }
 
-    void changeFps(int fps){
+    void updateFps(int fps){
         SDL_Log("Changing fps to: %d", fps);
         m_fps = fps;
         m_target_frame_time = int(1000/m_fps);
@@ -131,7 +151,6 @@ void MainApp :: handleKeyDownEvent(SDL_Event& event)
     key_name += SDL_GetKeyName(event.key.key);
     SDL_Log("A Key was pressed: %s", key_name.c_str());
     this->updateMainWindowTitle(key_name);
-    this->changeFps(event.key.key);
 }
 
 
@@ -156,33 +175,59 @@ void MainApp :: handleEvent(){
 }
 
 void MainApp :: render(){
+    // i am asking sdl t give me a surface directly onto the main window that i can directly manipulate
+    // SDL_Surface* windowSurface = SDL_GetWindowSurface(m_main_window);
+
+    // if (windowSurface != nullptr){
+    //     // now i will copy the loaded background surface onto the window surface
+    //     SDL_BlitSurface(m_background_surface, nullptr, windowSurface, nullptr);
+    //     SDL_UpdateWindowSurface(m_main_window);
+    // }
+
+    // SDL_RenderClear(m_renderer);
+    // SDL_RenderPresent(m_renderer);
+
+
+    SDL_SetRenderDrawColor(
+        m_renderer, 0, 0, 0, 255
+    );
+
+    SDL_RenderClear(m_renderer);
+
+    SDL_RenderTexture(
+        m_renderer,
+        m_background_texture,
+        nullptr,
+        nullptr
+    );
+
     SDL_RenderPresent(m_renderer);
 }
 
 
 void MainApp :: mainLoop(){
-    Uint64 startTick;
+    Uint64 frameStartTick;
     Uint64 frame_time;
-    Uint64 currentTick;
-    Uint64 lastTickFps = SDL_GetTicks();
+    Uint64 frameEndTick;
+    Uint64 fpsFirstTick = SDL_GetTicks();
     
     int fps = 0;
 
     while (this->m_running) {
 
-        startTick = SDL_GetTicks();
+        frameStartTick = SDL_GetTicks();
 
         handleEvent();
         render();
 
-        currentTick = SDL_GetTicks();
-        frame_time = currentTick - startTick;
+        frameEndTick = SDL_GetTicks();
+        frame_time = frameEndTick - frameStartTick;
 
         fps++;
 
-        if ( currentTick - lastTickFps >= 1000){
+        if ( frameEndTick - fpsFirstTick >= 1000){
             SDL_Log("FPS: %d", fps);
-            lastTickFps = currentTick;
+            fpsFirstTick = frameEndTick;
             fps = 0;
         }
 
