@@ -47,22 +47,22 @@ public:
 
 
         SDL_Surface* background_surface = nullptr;
-        background_surface = SDL_LoadBMP("./images/test.bmp");
+        // background_surface = SDL_LoadBMP("./images/test.bmp");
 
-        if (background_surface == nullptr){
-            Log("Error", "Initializing background surface", "Exiting");
-            return;
-        }
+        // if (background_surface == nullptr){
+        //     Log("Error", "Initializing background surface", "Exiting");
+        //     return;
+        // }
 
         m_background_texture = nullptr;
-        m_background_texture = SDL_CreateTextureFromSurface(m_renderer, background_surface);
+        // m_background_texture = SDL_CreateTextureFromSurface(m_renderer, background_surface);
 
-        if (m_background_texture == nullptr){
-            Log("Error", "Initializing background texture", "Exiting");
-            return;
-        }
+        // if (m_background_texture == nullptr){
+        //     Log("Error", "Initializing background texture", "Exiting");
+        //     return;
+        // }
         
-        SDL_DestroySurface(background_surface);
+        // SDL_DestroySurface(background_surface);
 
         m_initialized = true;
     }
@@ -188,18 +188,51 @@ void MainApp :: render(){
     // SDL_RenderPresent(m_renderer);
 
 
-    SDL_SetRenderDrawColor(
-        m_renderer, 0, 0, 0, 255
-    );
-
     SDL_RenderClear(m_renderer);
 
-    SDL_RenderTexture(
-        m_renderer,
-        m_background_texture,
-        nullptr,
-        nullptr
-    );
+    // SDL_RenderTexture(
+    //     m_renderer,
+    //     m_background_texture,
+    //     nullptr,
+    //     nullptr
+    // );
+
+    int width, height;
+    SDL_GetWindowSize(m_main_window, &width, &height);
+
+    // float header_height = height * 0.050f;
+    // float header_height = 32;
+    // header_height = header_height > (float)32 ? (float)32 : header_height;
+
+    // SDL_FRect header_color_rect = {
+    //     0, 0,                   // absolute position x, y top top left
+    //     width,
+    //     header_height
+    // };
+
+    // SDL_FRect content_color_rect = {
+    //     0, header_height,                   // absolute position x, y top top left
+    //     0,
+    //     height - header_height
+    // };
+
+    // Header
+    // SDL_SetRenderDrawColor(m_renderer, 105, 115, 133, 255);
+    // SDL_RenderFillRect(m_renderer, &header_color_rect);
+
+    // Main content
+
+
+
+    SDL_FRect content_color_rect = {
+        0, 0,                   // absolute position x, y top top left
+        0,
+        (float)height
+    };
+
+    SDL_SetRenderDrawColor(m_renderer, 42, 60, 82, 255);
+    SDL_RenderFillRect(m_renderer, &content_color_rect);
+
 
     SDL_RenderPresent(m_renderer);
 }
@@ -226,7 +259,7 @@ void MainApp :: mainLoop(){
         fps++;
 
         if ( frameEndTick - fpsFirstTick >= 1000){
-            SDL_Log("FPS: %d", fps);
+            // SDL_Log("FPS: %d", fps);
             fpsFirstTick = frameEndTick;
             fps = 0;
         }
